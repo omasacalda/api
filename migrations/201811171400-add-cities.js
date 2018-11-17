@@ -1,5 +1,6 @@
 'use strict';
 
+const slugify = require('slugify');
 const City = require('../src/models').city;
 
 module.exports = {
@@ -10,7 +11,16 @@ module.exports = {
       }
     ];
 
-    return City.bulkCreate(cities);
+    const citiesData = cities.map((item) => {
+      return ({
+        ...item,
+        slug: slugify(item.name, {
+          lower: true 
+        })
+      })
+    })
+
+    return City.bulkCreate(citiesData);
   },
 
   down: (queryInterface, Sequelize) => {}

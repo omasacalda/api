@@ -12,7 +12,12 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       unique: false,
       primaryKey: false,
-
+    },
+    slug: {
+      type: DataTypes.STRING(),
+      allowNull: true,
+      unique: false,
+      primaryKey: false,
     },
     is_deleted: {
       type: DataTypes.BOOLEAN(),
