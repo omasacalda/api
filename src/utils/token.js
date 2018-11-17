@@ -16,6 +16,10 @@ const generate = (data, ttl = null) => {
   }, config.TOKEN_SECRET);
 }
 
+const decode = (token) => {
+  return jwt.decode(token, config.TOKEN_SECRET);
+}
+
 const TTL = {
   TTL_12_MONTHS: 365 * 24 * 60 * 60, // 1y in seconds
   TTL_6_MONTHS: 182 * 24 * 60 * 60
@@ -23,5 +27,6 @@ const TTL = {
 
 module.exports = {
   generate,
+  decode,
   TTL
 }

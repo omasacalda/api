@@ -52,8 +52,13 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
     underscored: true,
   });
-  User.associate = (models) => {
-    // User.hasMany(models.booking, {as: 'booking'});
-  }
+
+  User.prototype.toJSON = function () {
+    let data = Object.assign({}, this.get());
+    delete data.password
+    delete data.salt
+    return data
+  };
+
   return User;
 };

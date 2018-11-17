@@ -55,7 +55,10 @@ bookingRoute.get('/:id', (request, response) => {
   bookingService.get(request.params.id)
     .then(data => {
       response.status(STATUS_CODE.OK);
-      response.json(data);
+      response.json({
+        success: true,
+        data
+      });
     })
     .catch(err => {
       response.status(err.status);

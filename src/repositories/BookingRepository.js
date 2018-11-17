@@ -4,11 +4,42 @@ const User = require('../models').user;
 
 class BookingRepository {
   get(id) {
-    return Booking.findOne({where: {id}, include: [{model: City, as: 'city'}, {model: User, as: 'user'}]});
+    return Booking.findOne({
+      where: {id},
+      include: [
+        {
+          model: City,
+          as: 'city'
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: {
+            exclude: ['salt', 'password']
+          }
+        }
+      ]
+    });
   }
 
   getAll(offset, limit) {
-    return Booking.findAll({limit, offset, include: [{model: City, as: 'city'}, {model: User, as: 'user'}]});
+    return Booking.findAll({
+      limit,
+      offset,
+      include: [
+        {
+          model: City,
+          as: 'city'
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: {
+            exclude: ['salt', 'password']
+          }
+        }
+      ]
+    });
   }
 
   getByDate(bookinDate) {
