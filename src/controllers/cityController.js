@@ -29,18 +29,12 @@ cityRoute.get('/:id', (request, response) => {
 });
 
 cityRoute.get('/', (request, response) => {
-  cityService.getAll(request.query.offset, request.query.limit)
+  cityService.getAll(request.query)
     .then(data => {
-      if (!data || data.size === 0) {
-        response.status(STATUS_CODE.NO_CONTENT);
-        response.end();
-      } else {
-        response.status(STATUS_CODE.OK);
-        response.json({
-          success: true,
-          data
-        });
-      }
+      response.json({
+        success: true,
+        data
+      });
     })
     .catch(err => {
       response.status(err.status);

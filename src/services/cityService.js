@@ -33,16 +33,11 @@ class CityService {
     });
   }
 
-  getAll() {
-     const result = {
-       data: []
-     };
-
+  getAll(query) {
      return new Promise((resolve, reject) => {
-      this.repository.getAll()
+      this.repository.getAll(query)
         .then(data => {
-          result.data = data;
-          resolve(result);
+          resolve(data);
         })
         .catch(err => {
           reject({'status': STATUS_CODE.INTERNAL_SERVER_ERROR, 'message': err.message});

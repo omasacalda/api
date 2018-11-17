@@ -6,8 +6,16 @@ class CityRepository {
     return City.findOne({where: {id}});
   }
 
-  getAll() {
-    return City.findAll();
+  getAll(query = {}) {
+    let where = {};
+
+    if (query.slug != null) {
+      where.slug = query.slug
+    }
+
+    return City.findAll({
+      where
+    });
   }
 
   save(data) {
