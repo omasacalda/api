@@ -36,7 +36,10 @@ cityRoute.get('/', (request, response) => {
         response.end();
       } else {
         response.status(STATUS_CODE.OK);
-        response.json(data);
+        response.json({
+          success: true,
+          data
+        });
       }
     })
     .catch(err => {
