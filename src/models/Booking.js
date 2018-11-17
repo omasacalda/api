@@ -26,6 +26,10 @@ module.exports = (sequelize, DataTypes) => {
     token: {
       type: DataTypes.STRING()
     },
+    is_deleted: {
+      type: DataTypes.BOOLEAN(),
+      defaultValue: 0
+    },
     inserted_at: {
       type: DataTypes.DATE,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),

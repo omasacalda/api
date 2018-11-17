@@ -1,4 +1,6 @@
+const moment = require('moment');
 const bookingRoute = require('express').Router();
+
 const bookingService = require('../services/bookingService');
 const userService = require('../services/userService');
 const cityService = require('../services/cityService');
@@ -7,6 +9,7 @@ const STATUS_CODE = require('../commons/constants/statusCode');
 const errorHandler = require('../utils/error-handler');
 const bookingValidator = require('../validators/booking');
 const token = require('../utils/token');
+const authorizeBooking = require('../middlewares/authorize-booking');
 
 bookingRoute.post('/', bookingValidator, async (req, res) => {
   try {
@@ -24,16 +27,16 @@ bookingRoute.post('/', bookingValidator, async (req, res) => {
     });
 
     // Create booking
-    const bookingID = await bookingService.save({
+    const booking = await bookingService.save({
       ...data,
       city_id: city.id,
       user_id: userID
     });
     const bookingToken = token.generate({
       user_id: userID,
-      booking_id: bookingID
+      booking_id: booking.id
     });
-    const updatedBooking = await bookingService.update(bookingID, {
+    const updatedBooking = await bookingService.update(booking.id, {
       token: bookingToken
     });
 
@@ -66,28 +69,34 @@ bookingRoute.get('/:id', (request, response) => {
     });
 });
 
-bookingRoute.delete('/:id', (request, response) => {
-  bookingService.delete(request.params.id)
-    .then(() => {
-      response.status(STATUS_CODE.NO_CONTENT);
-      response.end();
-    })
-    .catch(err => {
-      response.status(err.status);
-      response.json(err);
-    });
-});
+bookingRoute.delete('/:id', authorizeBooking, async (req, res) => {
+  try {
+    const bookingID = req.params.id;
+    const booking = await bookingService.get(bookingID);
 
-bookingRoute.put('/:id', (request, response) => {
-  bookingService.update(request.params.id, request.body)
-    .then(data => {
-      response.status(STATUS_CODE.OK);
-      response.json(data);
-    })
-    .catch(err => {
-      response.status(err.status);
-      response.json(err);
+    const now = moment();
+    const bookingDate = moment(booking.date);
+    if (bookingDate.isBefore(now, 'day')) {
+      throw Object.assign({}, new Error(), { message: `Can't delete a past booking` });
+    }
+
+    const role = req.role;
+    if (role === 'default' && (booking.id !== req.booking_id || booking.user_id !== req.user_id)) {
+      throw Object.assign({}, new Error(), { message: 'Access denied' });
+    }
+
+    if (role !== 'default' && role !== 'admin') {
+      throw Object.assign({}, new Error(), { message: 'Access denied' });
+    }
+
+    await bookingService.delete(bookingID);
+
+    return res.json({
+      success: true
     });
+  } catch (err) {
+    errorHandler(err, req, res)
+  }
 });
 
 bookingRoute.get('/', (request, response) => {

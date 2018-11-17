@@ -52,7 +52,7 @@ class BookingRepository {
 
   save(data) {
     return Booking.create(data).then((created) => {
-      return created.id;
+      return created;
     });
   }
 
@@ -65,7 +65,11 @@ class BookingRepository {
   }
 
   delete(id) {
-    return Booking.destroy({where: {id}});
+    return Booking.update({
+      is_deleted: true
+    }, {
+      where: { id }
+    });
   }
 
   exists(id) {
