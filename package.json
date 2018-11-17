@@ -1,0 +1,29 @@
+{
+  "name": "masacalda-api",
+  "version": "1.0.0",
+  "description": "booking api for masacalda",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo 'Error: no test specified' && exit 1",
+    "start": "node src/index.js",
+    "start:dev": "./node_modules/.bin/nodemon -L src/index.js",
+    "migrate": "./node_modules/.bin/sequelize db:migrate --env development --config ./src/configs/database.js",
+    "db:create-migration": "./node_modules/.bin/sequelize migration:create --env development --config ./src/configs/database.js"
+  },
+  "author": "Calin Tamas <calinntamas@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "jwt-simple": "^0.5.5",
+    "moment": "^2.22.2",
+    "morgan": "^1.9.1",
+    "mysql2": "^1.6.4",
+    "node_hash": "^0.2.0",
+    "sequelize": "^4.41.2",
+    "sequelize-cli": "^5.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.6"
+  }
+}
