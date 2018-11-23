@@ -1,6 +1,7 @@
 const moment = require('moment');
 const bookingRoute = require('express').Router();
 
+const config = require('../configs/config');
 const bookingService = require('../services/bookingService');
 const userService = require('../services/userService');
 const cityService = require('../services/cityService');
@@ -10,6 +11,7 @@ const errorHandler = require('../utils/error-handler');
 const bookingValidator = require('../validators/booking');
 const token = require('../utils/token');
 const authorizeBooking = require('../middlewares/authorize-booking');
+const Mailer = require('../services/Mailer');
 
 bookingRoute.post('/', bookingValidator, async (req, res) => {
   try {
@@ -39,6 +41,20 @@ bookingRoute.post('/', bookingValidator, async (req, res) => {
     const updatedBooking = await bookingService.update(booking.id, {
       token: bookingToken
     });
+
+    const bookingDate = moment(data.date).format('DD-MM-YYYY');
+    const msg = {
+      to: data.email,
+      from: 'noreply@omasacalda.ro',
+      subject: `O masa calda | Te-ai programat cu succes in data de ${bookingDate}`,
+      html: `
+        <div>
+          <p>Hello</p>
+          <a href='${config.WEB_HOST}/booking/${bookingToken}'>Anuleaza programarea</a>
+        </div>
+      `,
+    };
+    await Mailer.send(msg);
 
     return res
       .status(STATUS_CODE.OK)
