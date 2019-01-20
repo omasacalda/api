@@ -26,6 +26,9 @@ class BookingRepository {
     return Booking.findAll({
       limit,
       offset,
+      where: {
+        is_deleted: 0
+      },
       include: [
         {
           model: City,
