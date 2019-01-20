@@ -4,7 +4,6 @@ const config = require('../configs/config');
 class MailerService {
   constructor() {
     sg.setApiKey(config.SENDGRID_KEY);
-    console.log('SENDGRID_KEY', config.SENDGRID_KEY);
   }
 
   send(data = {}) {

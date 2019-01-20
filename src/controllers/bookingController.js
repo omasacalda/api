@@ -42,17 +42,24 @@ bookingRoute.post('/', bookingValidator, async (req, res) => {
       token: bookingToken
     });
 
-    const bookingDate = moment(data.date).format('DD-MM-YYYY');
+    const bookingDate = moment(data.date).format('DD.MM.YYYY');
+    const subject = `Te-ai programat cu succes in data de ${bookingDate}`;
     const msg = {
       to: data.email,
-      from: 'noreply@omasacalda.ro',
-      subject: `O masa calda | Te-ai programat cu succes in data de ${bookingDate}`,
-      html: `
-        <div>
-          <p>Hello</p>
-          <a href='${config.WEB_HOST}/booking/${bookingToken}'>Anuleaza programarea</a>
-        </div>
-      `,
+      from: 'O masa calda <noreply@omasacalda.ro>',
+      subject: subject,
+      templateId: config.SENDGRID_TEMPLATE_ID,
+      dynamic_template_data: {
+        "subject": subject,
+        "title": subject,
+        "booking_url": `${config.WEB_HOST}/booking/${bookingToken}`,
+        "user_first_name": data.first_name,
+        "user_last_name": data.last_name,
+        "date": bookingDate,
+        "city": city.name,
+        "person_count": data.person_count,
+        "phone_number": data.phone
+      }
     };
     await Mailer.send(msg);
 

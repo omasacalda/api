@@ -5,7 +5,10 @@ const User = require('../models').user;
 class BookingRepository {
   get(id) {
     return Booking.findOne({
-      where: {id},
+      where: {
+        id,
+        is_deleted: 0
+      },
       include: [
         {
           model: City,
@@ -48,7 +51,8 @@ class BookingRepository {
   getByDate(bookinDate) {
     return Booking.findOne({
       where: {
-        date: bookinDate
+        date: bookinDate,
+        is_deleted: 0
       }
     })
   }
