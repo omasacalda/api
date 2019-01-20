@@ -1,4 +1,8 @@
 const NodeCache = require('node-cache');
+const moment = require('moment');
+
+const config = require('../configs/config')
+const BOOKING_IN_PROGRESS_TTL = config.BOOKING_IN_PROGRESS_TTL;
 
 class Cache {
   constructor() {
@@ -6,6 +10,11 @@ class Cache {
   }
 
   set(key, data) {
+    data = {
+      ...data,
+      ttl: moment().add(BOOKING_IN_PROGRESS_TTL, 's').valueOf()
+    }
+
     return new Promise(async (resolve, reject) => {
       let newData = [data];
 
@@ -33,7 +42,21 @@ class Cache {
           return resolve(null);
         }
 
-        return resolve(value)
+        const now = moment();
+        let shouldUpdateData = false;
+        const newData = value.filter((item) => {
+          const isExpired = moment(item.ttl).isBefore(now)
+          if (isExpired) {
+            shouldUpdateData = true
+          }
+          return !isExpired
+        });
+
+        if (shouldUpdateData) {
+          this.cache.set(key, newData);
+        }
+
+        return resolve(newData)
       })
     })
   }
