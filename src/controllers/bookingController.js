@@ -61,7 +61,7 @@ bookingRoute.post('/', bookingValidator, async (req, res) => {
         "phone_number": data.phone
       }
     };
-    await Mailer.send(msg);
+    Mailer.send(msg);
 
     return res
       .status(STATUS_CODE.OK)
