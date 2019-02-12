@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 
 const config = require('./configs/config')
 const loadExpressConfig = require('./configs/express.js');
@@ -11,6 +12,8 @@ app = loadExpressConfig(app);
 
 app.use('/', router);
 app.use(errorHandler);
+
+app.use('/static', express.static(path.join(__dirname, '../static')))
 
 const server = app.listen(config.APP_PORT, () => {
   console.log('App started on port: ' + config.APP_PORT);
