@@ -32,18 +32,21 @@ class BookingRepository {
       where: {
         is_deleted: 0
       },
+      attributes: {
+        exclude: ['token']
+      },
       include: [
-        {
-          model: City,
-          as: 'city'
-        },
-        {
-          model: User,
-          as: 'user',
-          attributes: {
-            exclude: ['salt', 'password']
-          }
-        }
+        // {
+        //   model: City,
+        //   as: 'city'
+        // },
+        // {
+        //   model: User,
+        //   as: 'user',
+        //   attributes: {
+        //     exclude: ['salt', 'password']
+        //   }
+        // }
       ]
     });
   }
