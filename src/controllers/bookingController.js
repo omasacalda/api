@@ -123,7 +123,7 @@ bookingRoute.delete('/:id', authorizeBooking, async (req, res) => {
 });
 
 bookingRoute.get('/', (request, response) => {
-  bookingService.getAll(request.query.offset, request.query.limit)
+  bookingService.getAll(request.query.offset, request.query.limit || 9999)
     .then(data => {
       if (!data || data.size === 0) {
         response.status(STATUS_CODE.NO_CONTENT);
