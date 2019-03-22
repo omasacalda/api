@@ -54,6 +54,7 @@ bookingRoute.post('/', bookingValidator, async (req, res) => {
         "booking_url": `${config.WEB_HOST}/booking/${bookingToken}`,
         "user_first_name": data.first_name,
         "user_last_name": data.last_name,
+        "user_email": data.email,
         "date": bookingDate,
         "city": city.name,
         "person_count": data.person_count,
@@ -61,6 +62,27 @@ bookingRoute.post('/', bookingValidator, async (req, res) => {
       }
     };
     Mailer.send(msg);
+
+
+    // Send mail to admin
+    Mailer.send({
+      to: config.ADMIN_EMAIL,
+      from: 'O masa calda <noreply@omasacalda.ro>',
+      templateId: config.SENDGRID_ADMIN_TEMPLATE_ID,
+      dynamic_template_data: {
+        "subject": '[Admin] Rezervare O Masa Calda',
+        "title": `A fost facuta o noua rezervare in data de ${bookingDate}`,
+        "user_first_name": data.first_name,
+        "user_last_name": data.last_name,
+        "user_email": data.email,
+        "date": bookingDate,
+        "city": city.name,
+        "person_count": data.person_count,
+        "phone_number": data.phone,
+        "type": data.type,
+        "company_name": data.company_name
+      }
+    })
 
     return res
       .status(STATUS_CODE.OK)
@@ -121,6 +143,31 @@ bookingRoute.delete('/:id', authorizeBooking, async (req, res) => {
     }
 
     await bookingService.delete(bookingID);
+
+    const user = await userService.get(booking.user_id);
+    const city = await cityService.get(booking.city_id);
+
+    const bookingDateString = bookingDate.format('DD.MM.YYYY');
+
+    // Send mail to admin
+    Mailer.send({
+      to: config.ADMIN_EMAIL,
+      from: 'O masa calda <noreply@omasacalda.ro>',
+      templateId: config.SENDGRID_ADMIN_TEMPLATE_ID,
+      dynamic_template_data: {
+        "subject": '[Admin] Anulare Rezervare O Masa Calda',
+        "title": `Rezervarea din data de ${bookingDateString} a fost anulata`,
+        "user_first_name": user.first_name,
+        "user_last_name": user.last_name,
+        "user_email": user.email,
+        "date": bookingDateString,
+        "city": city.name,
+        "person_count": booking.person_count,
+        "phone_number": user.phone,
+        "type": booking.type,
+        "company_name": booking.company_name
+      }
+    })
 
     return res.json({
       success: true
