@@ -34,6 +34,7 @@ bookingRoute.post('/', bookingValidator, async (req, res) => {
       city_id: city.id,
       user_id: userID
     });
+
     const bookingToken = token.generate({
       user_id: userID,
       booking_id: booking.id
@@ -43,15 +44,13 @@ bookingRoute.post('/', bookingValidator, async (req, res) => {
     });
 
     const bookingDate = moment(data.date).format('DD.MM.YYYY');
-    const subject = `Te-ai programat cu succes in data de ${bookingDate}`;
     const msg = {
       to: data.email,
       from: 'O masa calda <noreply@omasacalda.ro>',
-      subject: subject,
       templateId: config.SENDGRID_TEMPLATE_ID,
       dynamic_template_data: {
-        "subject": subject,
-        "title": subject,
+        "subject": 'Rezervare O Masa Calda',
+        "title": `Te-ai programat cu succes in data de ${bookingDate}`,
         "booking_url": `${config.WEB_HOST}/booking/${bookingToken}`,
         "user_first_name": data.first_name,
         "user_last_name": data.last_name,
@@ -77,19 +76,28 @@ bookingRoute.post('/', bookingValidator, async (req, res) => {
   }
 });
 
-bookingRoute.get('/:id', (request, response) => {
-  bookingService.get(request.params.id)
-    .then(data => {
-      response.status(STATUS_CODE.OK);
-      response.json({
-        success: true,
-        data
-      });
-    })
-    .catch(err => {
-      response.status(err.status);
-      response.json(err);
+bookingRoute.get('/:id', authorizeBooking, async (req, res) => {
+  try {
+    const bookingID = req.params.id;
+    const booking = await bookingService.get(bookingID);
+
+    const role = req.role;
+
+    if (role === 'default' && (booking.id !== req.booking_id || booking.user_id !== req.user_id)) {
+      throw Object.assign({}, new Error(), { message: 'Access denied' });
+    }
+
+    if (role !== 'default' && role !== 'admin') {
+      throw Object.assign({}, new Error(), { message: 'Access denied' });
+    }
+
+    return res.json({
+      success: true,
+      data: booking
     });
+  } catch (err) {
+    errorHandler(err, req, res)
+  }
 });
 
 bookingRoute.delete('/:id', authorizeBooking, async (req, res) => {
