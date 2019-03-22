@@ -14,8 +14,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(),
       allowNull: false,
       unique: false,
-      primaryKey: false,
-
+      primaryKey: false
+    },
+    company_name: {
+      type: DataTypes.STRING(),
+      allowNull: true
     },
     person_count: {
       type: DataTypes.INTEGER(),

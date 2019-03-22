@@ -8,9 +8,10 @@ const booking = (req, res, next) => {
       phone,
       email,
       person_count,
-      type,
+      type, // ENUM ('companie', 'individual')
       date,
-      city_id
+      city_id,
+      company_name
     } = req.body;
 
     const isEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
@@ -24,7 +25,8 @@ const booking = (req, res, next) => {
       !(person_count > 3) ||
       !(person_count < 7) ||
       !date ||
-      !city_id
+      !city_id ||
+      (type === 'companie' && !company_name)
     ) {
       throw new Error('Please complete all required fields')
     }
