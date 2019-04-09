@@ -51,6 +51,13 @@ class BookingRepository {
     });
   }
 
+  getEverything({ query, include }) {
+    return Booking.findAll({
+      where: query,
+      include
+    });
+  }
+
   getByDate(bookinDate) {
     return Booking.findOne({
       where: {

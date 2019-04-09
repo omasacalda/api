@@ -7,6 +7,8 @@ const router = require('./configs/router.js');
 const errorHandler = require('./utils/error-handler');
 const CacheService = require('./services/Cache');
 
+const crons = require('./crons');
+
 require('dns-cache')(10000);
 
 let app = express();
