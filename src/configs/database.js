@@ -1,20 +1,8 @@
 module.exports = {
-  "development": {
-    // "uri": "mysql://root:parola@127.0.0.1:3306/masacaldadb",
-    "username": "root",
-    "password": "parola",
-    "database": "masacaldadb",
-    "host": "database",
-    "dialect": "mysql",
-    "port": "3306"
-  },
-  "production": {
-    "uri": "mysql://user:password@host:port/database",
-    "username": "user",
-    "password": "password",
-    "database": "database",
-    "host": "host",
-    "dialect": "mysql",
-    "port": "port"
-  }
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  host: process.env.DB_HOST,
+  dialect: 'mysql',
+  port: process.env.DB_PORT
 }
