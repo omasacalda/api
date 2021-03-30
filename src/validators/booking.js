@@ -14,27 +14,29 @@ const booking = (req, res, next) => {
       company_name
     } = req.body;
 
-    const isEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+    const isEmail = new RegExp(
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
 
     if (
-      !(first_name.length > 2 ) ||
-      !(last_name.length > 2 ) ||
-      !(phone.length > 7 ) ||
-      !(email.length) ||
+      !(first_name.length > 2) ||
+      !(last_name.length > 2) ||
+      !(phone.length > 7) ||
+      !email.length ||
       !isEmail.test(email) ||
-      !(person_count > 3) ||
-      !(person_count < 7) ||
+      !(person_count > 1) ||
+      !(person_count < 5) ||
       !date ||
       !city_id ||
       (type === 'companie' && !company_name)
     ) {
-      throw new Error('Please complete all required fields')
+      throw new Error('Please complete all required fields');
     }
 
     next();
   } catch (err) {
     next({ status: STATUS_CODE.BAD_REQUEST, message: `${err}` });
   }
-}
+};
 
-module.exports = booking
+module.exports = booking;
